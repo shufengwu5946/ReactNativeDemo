@@ -14,6 +14,7 @@ import Touchables from "./components/Touchables";
 import IScrolledDownAndWhatHappenedNextShockedMe from "./components/IScrolledDownAndWhatHappenedNextShockedMe";
 import FlatListBasics from "./components/FlatListBasics";
 import SectionListBasics from "./components/SectionListBasics";
+import Weather from "./components/Weather";
 
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
@@ -29,7 +30,8 @@ export default class App extends Component {
     // return <Touchables/>
     // return <IScrolledDownAndWhatHappenedNextShockedMe />;
     // return <FlatListBasics/>
-    return <SectionListBasics/>
+    // return <SectionListBasics/>
+    return <Weather/>
   }
 }
 
