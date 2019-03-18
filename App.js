@@ -22,6 +22,10 @@ import {
   NavigationEvents
 } from "react-navigation";
 import FadeInView from "./components/FadeInView";
+import Ionicons from "react-native-vector-icons/Ionicons";
+// import { Icon } from 'antd';
+import HomeIconWithBadge from "./components/HomeIconWithBadge";
+import MyApp from "./components/drawerNavi/MyApp";
 
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -29,13 +33,13 @@ class HomeScreen extends React.Component {
       title: "Home",
       headerRight: (
         <Button
-          onPress={navigation.getParam('increaseCount')}
+          onPress={navigation.getParam("increaseCount")}
           title="+1"
           color="#000000"
         />
-      ),
+      )
     };
-    
+
     // headerStyle: {
     //   backgroundColor: "#0000ff"
     // },
@@ -46,13 +50,12 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    count: 0,
+    count: 0
   };
 
   _increaseCount = () => {
     this.setState({ count: this.state.count + 1 });
   };
-
 
   componentDidMount() {
     // 添加监听
@@ -60,11 +63,9 @@ class HomeScreen extends React.Component {
       "didFocus",
       () => {
         // console.log(obj);
-        Alert.alert("didFocus");
+        //Alert.alert("didFocus");
       }
     );
-
-
 
     this.props.navigation.setParams({ increaseCount: this._increaseCount });
   }
@@ -118,12 +119,12 @@ class DetailsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <NavigationEvents
+        {/* <NavigationEvents
           onWillFocus={() => Alert.alert("will focus")}
           onDidFocus={() => Alert.alert("did focus")}
           onWillBlur={() => Alert.alert("will blur")}
           onDidBlur={() => Alert.alert("did blur")}
-        />
+        /> */}
         <Text>Details Screen</Text>
         <Button
           title="Go to Details... again"
@@ -219,18 +220,55 @@ const SettingsStack = createStackNavigator(
       headerTitleStyle: {
         fontWeight: "bold"
       }
+    },
+    mode: "modal",
+    headerMode: "none"
+  }
+);
+
+const TabNavigator = createBottomTabNavigator(
+  {
+    Home: HomeStack,
+    Settings: SettingsStack
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let IconComponent = Ionicons;
+        let iconName;
+        if (routeName === "Home") {
+          iconName = `ios-information-circle${focused ? "" : "-outline"}`;
+          // Sometimes we want to add badges to some icons.
+          // You can check the implementation below.
+          IconComponent = HomeIconWithBadge;
+        } else if (routeName === "Settings") {
+          iconName = `ios-options${focused ? "" : "-outline"}`;
+        }
+
+        // You can return any component that you like here!
+        return <IconComponent name={iconName} size={25} color={tintColor} />;
+      }
+    }),
+    tabBarOptions: {
+      activeTintColor: "tomato",
+      inactiveTintColor: "gray"
     }
   }
 );
 
-const TabNavigator = createBottomTabNavigator({
-  Home: HomeStack,
-  Settings: SettingsStack
-});
-
 const AppContainer = createAppContainer(TabNavigator);
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.handleNavigationChange = this.handleNavigationChange.bind(this);
+  }
+
+  handleNavigationChange(prevState, newState, action) {
+    // Alert.alert(`${prevState} ${newState} ${action}`);
+  }
+
   render() {
     // return <FlexDirectionBasics />;
     // return <PizzaTranslator />;
@@ -239,11 +277,12 @@ export default class App extends Component {
     // return <FlatListBasics/>
     // return <SectionListBasics/>
     // return <AppContainer />;
-    return (
-      <FadeInView style={{ flex: 1, backgroundColor: "powderblue" }}>
-        <AppContainer />
-      </FadeInView>
-    );
+    // return (
+    //   <FadeInView style={{ flex: 1, backgroundColor: "powderblue" }}>
+    //     <AppContainer onNavigationStateChange={this.handleNavigationChange} />
+    //   </FadeInView>
+    // );
+    return <MyApp />;
   }
 }
 
