@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View, Button } from "react-native";
+import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
 import FlexDirectionBasics from "./components/FlexDirectionBasics";
 import PizzaTranslator from "./components/TextInput";
 import Touchables from "./components/Touchables";
@@ -15,9 +15,65 @@ import IScrolledDownAndWhatHappenedNextShockedMe from "./components/IScrolledDow
 import FlatListBasics from "./components/FlatListBasics";
 import SectionListBasics from "./components/SectionListBasics";
 import Weather from "./components/Weather";
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import {
+  createStackNavigator,
+  createAppContainer,
+  createBottomTabNavigator,
+  NavigationEvents
+} from "react-navigation";
+import FadeInView from "./components/FadeInView";
 
 class HomeScreen extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Home",
+      headerRight: (
+        <Button
+          onPress={navigation.getParam('increaseCount')}
+          title="+1"
+          color="#000000"
+        />
+      ),
+    };
+    
+    // headerStyle: {
+    //   backgroundColor: "#0000ff"
+    // },
+    // headerTintColor: "#fff",
+    // headerTitleStyle: {
+    //   fontWeight: "bold"
+    // }
+  };
+
+  state = {
+    count: 0,
+  };
+
+  _increaseCount = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+
+  componentDidMount() {
+    // 添加监听
+    this.didBlurSubscription = this.props.navigation.addListener(
+      "didFocus",
+      () => {
+        // console.log(obj);
+        Alert.alert("didFocus");
+      }
+    );
+
+
+
+    this.props.navigation.setParams({ increaseCount: this._increaseCount });
+  }
+
+  componentWillUnmount() {
+    // 移除监听
+    this.didBlurSubscription.remove();
+  }
+
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -32,9 +88,42 @@ class HomeScreen extends React.Component {
 }
 
 class DetailsScreen extends React.Component {
+  static navigationOptions = {
+    title: "Details",
+    headerStyle: {
+      backgroundColor: "#ff00ff"
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "bold"
+    }
+  };
+
+  componentDidMount() {
+    // 添加监听
+    // this.didBlurSubscription = this.props.navigation.addListener(
+    //   "didFocus",
+    //   obj => {
+    //     // console.log(obj);
+    //     Alert.alert("didFocus");
+    //   }
+    // );
+  }
+
+  componentWillUnmount() {
+    // 移除监听
+    // this.didBlurSubscription.remove();
+  }
+
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <NavigationEvents
+          onWillFocus={() => Alert.alert("will focus")}
+          onDidFocus={() => Alert.alert("did focus")}
+          onWillBlur={() => Alert.alert("will blur")}
+          onDidBlur={() => Alert.alert("did blur")}
+        />
         <Text>Details Screen</Text>
         <Button
           title="Go to Details... again"
@@ -57,16 +146,89 @@ class DetailsScreen extends React.Component {
   }
 }
 
-const AppNavigator = createStackNavigator(
+class SettingsScreen extends React.Component {
+  static navigationOptions = {
+    title: "Settings"
+  };
+
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text>Settings Screen</Text>
+        <Button
+          title="Go to Profile"
+          onPress={() => this.props.navigation.navigate("Profile")}
+        />
+      </View>
+    );
+  }
+}
+
+class ProfileScreen extends React.Component {
+  static navigationOptions = {
+    title: "Profile"
+  };
+
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text>Profile Screen</Text>
+        <Button
+          title="Go to Settings"
+          onPress={() => this.props.navigation.navigate("Settings")}
+        />
+      </View>
+    );
+  }
+}
+
+const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
     Details: DetailsScreen
   },
   {
-    initialRouteName: "Home"
+    /* The header config from HomeScreen is now here */
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: "#0000ff"
+      },
+      headerTintColor: "#fff",
+      headerTitleStyle: {
+        fontWeight: "bold"
+      }
+    },
+    navigationOptions: {
+      tabBarLabel: "Home!"
+    }
   }
 );
-const AppContainer = createAppContainer(AppNavigator);
+
+const SettingsStack = createStackNavigator(
+  {
+    Settings: SettingsScreen,
+    Profile: ProfileScreen
+  },
+  {
+    /* The header config from HomeScreen is now here */
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: "#00ff00"
+      },
+      headerTintColor: "#fff",
+      headerTitleStyle: {
+        fontWeight: "bold"
+      }
+    }
+  }
+);
+
+const TabNavigator = createBottomTabNavigator({
+  Home: HomeStack,
+  Settings: SettingsStack
+});
+
+const AppContainer = createAppContainer(TabNavigator);
 
 export default class App extends Component {
   render() {
@@ -76,7 +238,12 @@ export default class App extends Component {
     // return <IScrolledDownAndWhatHappenedNextShockedMe />;
     // return <FlatListBasics/>
     // return <SectionListBasics/>
-    return <AppContainer />;
+    // return <AppContainer />;
+    return (
+      <FadeInView style={{ flex: 1, backgroundColor: "powderblue" }}>
+        <AppContainer />
+      </FadeInView>
+    );
   }
 }
 
