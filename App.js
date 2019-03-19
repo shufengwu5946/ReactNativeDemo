@@ -26,6 +26,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 // import { Icon } from 'antd';
 import HomeIconWithBadge from "./components/HomeIconWithBadge";
 import MyApp from "./components/drawerNavi/MyApp";
+import AuthAppContainer from "./components/auth/AuthAppContainer";
+import StatusBarStackNavi from "./components/statusbar/StatusBarStackNavi";
+import StatusBarDrawerNavi from "./components/statusbar/StatusBarDrawerNavi";
+import StatusBarTabNavi from "./components/statusbar/StatusBarTabNavi";
 
 class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -282,7 +286,11 @@ export default class App extends Component {
     //     <AppContainer onNavigationStateChange={this.handleNavigationChange} />
     //   </FadeInView>
     // );
-    return <MyApp />;
+    // return <MyApp />;
+    // return <AuthAppContainer />;
+    // return <StatusBarStackNavi />;
+    // return <StatusBarDrawerNavi />;
+    return <StatusBarTabNavi />;
   }
 }
 
